@@ -12,16 +12,23 @@ export default class AuthController {
       });
       return token.toJSON();
     } catch (error) {
-      return response.status(401).json({
-        message: error.message,
-      });
+      return response
+        .status(401)
+        .send({ error: { message: 'User with provided credentials could not be found' } })
     }
 
   }
 
   public async register({ request, response }: HttpContextContract) {
     try {
+      const userFound = await User.findBy('email', request.input('email'))
       
+      if (userFound) {
+        return response
+          .status(409)
+          .send({ error: { message: 'User already exists with this email' } })
+      }
+
       const validations = await schema.create({
         email: schema.string({}, [rules.email(), rules.unique({ table: 'users', column: 'email' })]),
         password: schema.string(),
@@ -32,7 +39,7 @@ export default class AuthController {
       return response.created(user)
 
     } catch (error) {
-      return response.status(401).json({
+      return response.status(409).json({
         message: error.message,
       });
     }
