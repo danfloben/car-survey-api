@@ -15,13 +15,13 @@ npm install
 ### Compile and Hot-Reload for Development
 
 ```sh
- node ace build --production
+ node ace serve --watch
 ```
 
 ### Compile and Minify for Production
 
 ```sh
-npm run build
+node ace build --production
 ```
 
 ### Run Unit Tests with [japa/runner)
